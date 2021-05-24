@@ -30,6 +30,14 @@ func NewNotFoundRESTError(message string) *RESTError {
 	}
 }
 
+func NewUnauthorizedRESTError(message string) *RESTError {
+	return &RESTError{
+		StatusCode: http.StatusUnauthorized,
+		Message:    message,
+		Error:      "UNAUTHORIZED",
+	}
+}
+
 // NewInternalServerError creates a new internal server REST error
 func NewInternalServerRESTError(message string, err error) *RESTError {
 	return &RESTError{
