@@ -19,8 +19,8 @@ var (
 )
 
 type loggerInterface interface {
-	MySQLLogger(...interface{})
-	ElasticSearchLogger(string, ...interface{})
+	Print(...interface{})
+	Printf(string, ...interface{})
 }
 
 type logger struct {
@@ -74,13 +74,13 @@ func getLevel() zapcore.Level {
 	}
 }
 
-// Implement the MySQL Logger interface
-func (l logger) MySQLLogger(v ...interface{}) {
+// Print function implements the MySQL Logger interface
+func (l logger) Print(v ...interface{}) {
 	Info(fmt.Sprintf("%v", v...))
 }
 
-// Implement the Elastic Logger interface
-func (l logger) ElasticSearchLogger(format string, v ...interface{}) {
+// Printf function implements the Elastic Logger interface
+func (l logger) Printf(format string, v ...interface{}) {
 	if len(v) == 0 {
 		Info(format)
 	} else {
