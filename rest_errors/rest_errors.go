@@ -1,7 +1,6 @@
 package rest_errors
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -16,13 +15,13 @@ type RESTError interface {
 type restError struct {
 	statusCode int           `json:"status_code"`
 	message    string        `json:"message"`
-	error      string        `json:"error"`
+	errorCode  string        `json:"error"`
 	causes     []interface{} `json:"causes"`
 }
 
 // Implement built-in Error go function
 func (e restError) Error() string {
-	return fmt.Sprintf("message: %s - status_code: %d - error: %s - causes: %v", e.message, e.statusCode, e.error, e.causes)
+	return e.errorCode
 }
 
 func (e restError) StatusCode() int {
@@ -37,11 +36,11 @@ func (e restError) Causes() []interface{} {
 	return e.causes
 }
 
-func NewRESTError(message string, statusCode int, err string, causes []interface{}) RESTError {
+func NewRESTError(message string, statusCode int, errorCode string, causes []interface{}) RESTError {
 	return restError{
 		statusCode: statusCode,
 		message:    message,
-		error:      err,
+		errorCode:  errorCode,
 		causes:     causes,
 	}
 }
@@ -51,7 +50,7 @@ func NewBadRequestRESTError(message string) RESTError {
 	return restError{
 		statusCode: http.StatusBadRequest,
 		message:    message,
-		error:      "bad_request",
+		errorCode:  "bad_request",
 	}
 }
 
@@ -60,7 +59,7 @@ func NewNotFoundRESTError(message string) RESTError {
 	return restError{
 		statusCode: http.StatusNotFound,
 		message:    message,
-		error:      "not_found",
+		errorCode:  "not_found",
 	}
 }
 
@@ -68,7 +67,7 @@ func NewUnauthorizedRESTError(message string) RESTError {
 	return restError{
 		statusCode: http.StatusUnauthorized,
 		message:    message,
-		error:      "unauthorized",
+		errorCode:  "unauthorized",
 	}
 }
 
@@ -77,7 +76,7 @@ func NewInternalServerRESTError(message string, err error) RESTError {
 	return restError{
 		statusCode: http.StatusInternalServerError,
 		message:    message,
-		error:      "internal_server_error",
+		errorCode:  "internal_server_error",
 		causes:     []interface{}{err.Error()},
 	}
 }

@@ -13,7 +13,7 @@ func TestNewRESTError(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.EqualValues(t, http.StatusForbidden, err.StatusCode())
 	assert.EqualValues(t, "This is the test message", err.Message())
-	assert.EqualValues(t, "message: This is the test message - status_code: 403 - error: forbidden - causes: [Error causes]", err.Error())
+	assert.EqualValues(t, "forbidden", err.Error())
 
 	assert.NotNil(t, err.Causes)
 	assert.EqualValues(t, 1, len(err.Causes()))
@@ -25,7 +25,7 @@ func TestNewInternalServerRESTError(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.EqualValues(t, http.StatusInternalServerError, err.StatusCode())
 	assert.EqualValues(t, "This is the test message", err.Message())
-	assert.EqualValues(t, "message: This is the test message - status_code: 500 - error: internal_server_error - causes: [Error causes]", err.Error())
+	assert.EqualValues(t, "internal_server_error", err.Error())
 
 	assert.NotNil(t, err.Causes())
 	assert.EqualValues(t, 1, len(err.Causes()))
@@ -37,7 +37,8 @@ func TestNewNotFoundRESTError(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.EqualValues(t, http.StatusNotFound, err.StatusCode())
 	assert.EqualValues(t, "This is the test message", err.Message())
-	assert.EqualValues(t, "message: This is the test message - status_code: 404 - error: not_found - causes: []", err.Error())
+	assert.EqualValues(t, "not_found", err.Error())
+	assert.Nil(t, err.Causes())
 }
 
 func TestNewBadRequestRESTError(t *testing.T) {
@@ -45,7 +46,8 @@ func TestNewBadRequestRESTError(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.EqualValues(t, http.StatusBadRequest, err.StatusCode())
 	assert.EqualValues(t, "This is the test message", err.Message())
-	assert.EqualValues(t, "message: This is the test message - status_code: 400 - error: bad_request - causes: []", err.Error())
+	assert.EqualValues(t, "bad_request", err.Error())
+	assert.Nil(t, err.Causes())
 }
 
 func TestNewUnauthorizedRESTError(t *testing.T) {
@@ -53,5 +55,6 @@ func TestNewUnauthorizedRESTError(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.EqualValues(t, http.StatusUnauthorized, err.StatusCode())
 	assert.EqualValues(t, "This is the test message", err.Message())
-	assert.EqualValues(t, "message: This is the test message - status_code: 401 - error: unauthorized - causes: []", err.Error())
+	assert.EqualValues(t, "unauthorized", err.Error())
+	assert.Nil(t, err.Causes())
 }
