@@ -20,24 +20,24 @@ type restError struct {
 }
 
 // Implement built-in Error go function
-func (e restError) Error() string {
+func (e *restError) Error() string {
 	return e.ErrorCode
 }
 
-func (e restError) StatusCode() int {
+func (e *restError) StatusCode() int {
 	return e.ErrorStatusCode
 }
 
-func (e restError) Message() string {
+func (e *restError) Message() string {
 	return e.ErrorMessage
 }
 
-func (e restError) Causes() []interface{} {
+func (e *restError) Causes() []interface{} {
 	return e.ErrorCauses
 }
 
 func NewRESTError(message string, statusCode int, errCode string, causes []interface{}) RESTError {
-	return restError{
+	return &restError{
 		ErrorStatusCode: statusCode,
 		ErrorMessage:    message,
 		ErrorCode:       errCode,
@@ -47,7 +47,7 @@ func NewRESTError(message string, statusCode int, errCode string, causes []inter
 
 // NewBadRequestRESTError creates a new bad request REST error
 func NewBadRequestRESTError(message string) RESTError {
-	return restError{
+	return &restError{
 		ErrorStatusCode: http.StatusBadRequest,
 		ErrorMessage:    message,
 		ErrorCode:       "bad_request",
@@ -56,7 +56,7 @@ func NewBadRequestRESTError(message string) RESTError {
 
 // NewNotFoundRESTError creates a new not found REST error
 func NewNotFoundRESTError(message string) RESTError {
-	return restError{
+	return &restError{
 		ErrorStatusCode: http.StatusNotFound,
 		ErrorMessage:    message,
 		ErrorCode:       "not_found",
@@ -64,7 +64,7 @@ func NewNotFoundRESTError(message string) RESTError {
 }
 
 func NewUnauthorizedRESTError(message string) RESTError {
-	return restError{
+	return &restError{
 		ErrorStatusCode: http.StatusUnauthorized,
 		ErrorMessage:    message,
 		ErrorCode:       "unauthorized",
