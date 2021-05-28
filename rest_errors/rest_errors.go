@@ -1,6 +1,8 @@
 package rest_errors
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -20,19 +22,19 @@ type restError struct {
 }
 
 // Implement built-in Error go function
-func (e *restError) Error() string {
+func (e restError) Error() string {
 	return e.ErrorCode
 }
 
-func (e *restError) StatusCode() int {
+func (e restError) StatusCode() int {
 	return e.ErrorStatusCode
 }
 
-func (e *restError) Message() string {
+func (e restError) Message() string {
 	return e.ErrorMessage
 }
 
-func (e *restError) Causes() []interface{} {
+func (e restError) Causes() []interface{} {
 	return e.ErrorCauses
 }
 
@@ -45,9 +47,17 @@ func NewRESTError(message string, statusCode int, errCode string, causes []inter
 	}
 }
 
+func NewRESTErrorFromBytes(bytes []byte) (RESTError, error) {
+	var apiErr restError
+	if err := json.Unmarshal(bytes, &apiErr); err != nil {
+		return nil, errors.New("invalid JSON bytes")
+	}
+	return apiErr, nil
+}
+
 // NewBadRequestRESTError creates a new bad request REST error
 func NewBadRequestRESTError(message string) RESTError {
-	return &restError{
+	return restError{
 		ErrorStatusCode: http.StatusBadRequest,
 		ErrorMessage:    message,
 		ErrorCode:       "bad_request",
@@ -56,7 +66,7 @@ func NewBadRequestRESTError(message string) RESTError {
 
 // NewNotFoundRESTError creates a new not found REST error
 func NewNotFoundRESTError(message string) RESTError {
-	return &restError{
+	return restError{
 		ErrorStatusCode: http.StatusNotFound,
 		ErrorMessage:    message,
 		ErrorCode:       "not_found",
@@ -64,7 +74,7 @@ func NewNotFoundRESTError(message string) RESTError {
 }
 
 func NewUnauthorizedRESTError(message string) RESTError {
-	return &restError{
+	return restError{
 		ErrorStatusCode: http.StatusUnauthorized,
 		ErrorMessage:    message,
 		ErrorCode:       "unauthorized",
@@ -73,7 +83,7 @@ func NewUnauthorizedRESTError(message string) RESTError {
 
 // NewInternalServerError creates a new internal server REST error
 func NewInternalServerRESTError(message string, err error) RESTError {
-	return &restError{
+	return restError{
 		ErrorStatusCode: http.StatusInternalServerError,
 		ErrorMessage:    message,
 		ErrorCode:       "internal_server_error",

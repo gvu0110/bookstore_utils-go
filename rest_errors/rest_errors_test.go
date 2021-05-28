@@ -20,6 +20,30 @@ func TestNewRESTError(t *testing.T) {
 	assert.EqualValues(t, "Error causes", err.Causes()[0])
 }
 
+func TestNewRESTErrorFromBytesInvalidJSONBytes(t *testing.T) {
+	jsonBytes := []byte(`{"status_code":"404","message":"No access token found","error":"not_found"}`)
+	restErr, err := NewRESTErrorFromBytes(jsonBytes)
+	assert.Nil(t, restErr)
+	assert.NotNil(t, err)
+	assert.EqualValues(t, "invalid JSON bytes", err.Error())
+}
+
+func TestNewRESTErrorFromBytesNoError(t *testing.T) {
+	jsonBytes := []byte(`{"status_code":404,"message":"No access token found","error":"not_found","causes":["Error causes"]}`)
+	restErr, err := NewRESTErrorFromBytes(jsonBytes)
+	if err != nil {
+		panic(err)
+	}
+	assert.Nil(t, err)
+	assert.NotNil(t, restErr)
+	assert.EqualValues(t, http.StatusNotFound, restErr.StatusCode())
+	assert.EqualValues(t, "No access token found", restErr.Message())
+	assert.EqualValues(t, "not_found", restErr.Error())
+	assert.NotNil(t, restErr.Causes())
+	assert.EqualValues(t, 1, len(restErr.Causes()))
+	assert.EqualValues(t, "Error causes", restErr.Causes()[0])
+}
+
 func TestNewInternalServerRESTError(t *testing.T) {
 	err := NewInternalServerRESTError("This is the test message", errors.New("Error causes"))
 	assert.NotNil(t, err)
