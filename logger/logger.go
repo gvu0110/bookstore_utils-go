@@ -53,7 +53,6 @@ func GetLogger() loggerInterface {
 }
 
 func getOutput() string {
-
 	output := strings.TrimSpace(os.Getenv(envLogOutput))
 	if output == "" {
 		return "stdout"
